@@ -35,7 +35,7 @@ module Locomotive
       def sign_in(options, request)
         entry = entries.all(options.type, options.id_field => options.id).first
 
-        if entry
+        if entry && entry.send(options.password_field)
           hashed_password = entry[:"#{options.password_field}_hash"]
           password        = ::BCrypt::Engine.hash_secret(options.password, entry.send(options.password_field).try(:salt))
           same_password   = secure_compare(password, hashed_password)
@@ -76,7 +76,7 @@ module Locomotive
         end
       end
 
-      def reset_password(options)
+      def reset_password(options, request)
         return :invalid_token       if options.reset_token.blank?
         return :password_too_short  if options.password.to_s.size < MIN_PASSWORD_LENGTH
 
@@ -92,6 +92,7 @@ module Locomotive
               '_auth_reset_token'   => nil,
               '_auth_reset_sent_at' => nil
             })
+            notify(:reset_password, entry, request)
 
             return [:"#{options.password_field}_reset", entry]
           end

@@ -78,7 +78,7 @@ module Locomotive::Steam
       def reset_password(options)
         return if authenticated?
 
-        status, entry = auth_service.reset_password(options)
+        status, entry = auth_service.auth.reset_password(options, request)
 
         if status == :password_reset
           store_authenticated(entry)
