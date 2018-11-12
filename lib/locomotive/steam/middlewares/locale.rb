@@ -20,7 +20,7 @@ module Locomotive::Steam
         env['steam.path']   = request.path_info
 
         env['steam.locale'] = session[session_key_name] = services.locale = extract_locale
-
+        #request.cookies[session_key_name] = env['steam.locale'].to_s
         log "Locale used: #{locale.upcase}"
 
         I18n.with_locale(locale) do
