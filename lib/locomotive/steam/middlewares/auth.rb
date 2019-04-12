@@ -14,6 +14,7 @@ module Locomotive::Steam
     class Auth < ThreadSafe
 
       include Concerns::Helpers
+      include Concerns::Recaptcha
 
       def _call
         load_authenticated_entry

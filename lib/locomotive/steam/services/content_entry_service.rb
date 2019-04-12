@@ -24,6 +24,20 @@ module Locomotive
         end
       end
 
+      def build(slug, attributes)
+        with_repository(type_slug) do |_repository|
+          _attributes = prepare_attributes(_repository.content_type, attributes)
+
+          entry = _repository.build(_attributes)
+
+          yield(entry) if block_given?
+
+          decorated_entry = i18n_decorate { entry }
+
+          _json_decorate(decorated_entry, as_json)
+        end
+      end
+
       # Warning: do not work with localized and file fields
       def create(type_slug, attributes, as_json = false)
         with_repository(type_slug) do |_repository|
